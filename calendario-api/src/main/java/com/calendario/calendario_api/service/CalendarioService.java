@@ -17,6 +17,7 @@ public class CalendarioService {
     private final CalendarioRepository calRepo;
     private final TipoRepository tipoRepo;
     private final RestTemplate restTemplate;
+    
 
     public CalendarioService(CalendarioRepository calRepo,
                              TipoRepository tipoRepo,
@@ -42,7 +43,7 @@ public class CalendarioService {
             // 1) Llamar a Express
             String dateStr = String.format("%04d/%02d/%02d",
                     fecha.getYear(), fecha.getMonthValue(), fecha.getDayOfMonth());
-            String url = "http://localhost:3000/api/holidays?date=" + dateStr;
+            String url = "http://express-service:3000/api/holidays?date" + dateStr;
             Map<String,String> resp = restTemplate.getForObject(url, Map.class);
             String msg = resp.get("message");
 
