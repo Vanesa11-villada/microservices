@@ -7,9 +7,8 @@ services:
   mysql:
     image: mysql:8.0
     environment:
+      MYSQL_DATABASE: calendario_festivo
       MYSQL_ROOT_PASSWORD: root
-    #ports:
-      #- "3307:3306" 
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -23,7 +22,7 @@ services:
       context: ./calendario-api
       dockerfile: Dockerfile
     ports:
-      - "8090:8090"
+      - "8090:8090"   # expuesto para pruebas desde host
     depends_on:
       - mysql
       - express-service
@@ -31,7 +30,6 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/calendario_festivo?useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      # Si más adelante refactorizas tu código para usar esta variable:
       FESTIVOS_API_URL: http://express-service:3000/api/holidays
     networks:
       - backend
@@ -42,7 +40,7 @@ services:
   mongodb:
     image: mongo:6
     ports:
-      - "27018:27017"
+      - "27018:27017"  # evita conflicto con tu Mongo local
     volumes:
       - mongo-data:/data/db
     networks:
@@ -56,7 +54,7 @@ services:
       context: ./festivos-api
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "3001:3000"   # antes era 3000, ahora 3001 para evitar colisión
     depends_on:
       - mongodb
     environment:
