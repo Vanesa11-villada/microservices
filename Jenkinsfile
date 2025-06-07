@@ -4,7 +4,6 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        // Reemplaza con tu URL real; si tu repo es privado, añade credentialsId aquí
         git branch: 'main', url: 'https://github.com/Vanesa11-villada/microservices.git'
       }
     }
