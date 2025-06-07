@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   # -------------------------
-  # 1) Base de datos MySQL
+  # 1) MySQL para Spring Boot
   # -------------------------
   mysql:
     image: mysql:8.0
@@ -34,13 +34,13 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/calendario_festivo?useSSL=false&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-      # Endpoint de tu API Express
+      # Si más adelante refactorizas tu código para usar esta variable:
       FESTIVOS_API_URL: http://express-service:3000/api/holidays
     networks:
       - backend
 
   # -------------------------
-  # 3) MongoDB
+  # 3) MongoDB para Express
   # -------------------------
   mongodb:
     image: mongo:6
