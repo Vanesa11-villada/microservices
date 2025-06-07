@@ -35,17 +35,17 @@ services:
       express-service:
         condition: service_started
     environment:
-      SPRING_DATASOURCE_URL: >-
+      SPRING_DATASOURCE_URL: >
         jdbc:mysql://mysql:3306/calendario_festivo
         ?useSSL=false
         &allowPublicKeyRetrieval=true
         &serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: user       # usar el usuario creado
-      SPRING_DATASOURCE_PASSWORD: pass       # su contraseña
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+      # ← Aquí inyectamos la URL para tu @Value
       FESTIVOS_API_URL: http://express-service:3000/api/holidays
     networks:
       - backend
-
   # -------------------------
   # 3) MongoDB para Express
   # -------------------------
