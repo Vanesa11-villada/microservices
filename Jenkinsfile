@@ -4,26 +4,33 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
+        // Clona tu repo (ajusta la URL si es necesario)
         git branch: 'main', url: 'https://github.com/Vanesa11-villada/microservices.git'
       }
     }
 
     stage('Deploy with Docker Compose') {
       steps {
-        bat 'docker compose down || exit 0'
-        bat 'docker compose up -d --build'
+        // Limpia contenedores antiguos
+        bat 'docker rm -f express_festivos || echo "express_festivos no existía"'
+        bat 'docker rm -f spring_calendario || echo "spring_calendario no existía"'
+        bat 'docker compose down --remove-orphans || exit 0'
+
+        // Reconstruye y levanta
+        bat 'docker compose up -d --build --force-recreate'
       }
     }
 
     stage('Smoke Test') {
       steps {
-<<<<<<< HEAD
+        // Espera a que arranquen (30s)
         bat 'powershell -Command "Start-Sleep -Seconds 30"'
-        bat 'docker logs spring_calendario --tail 20'
-=======
-        // Verificamos rápidamente que los servicios respondan
-        bat 'timeout /t 10'
->>>>>>> d86a99d (Actualizacion de docker-compose y Jenkinsfile)
+
+        // Muestra los últimos logs
+        bat 'docker compose logs --tail 20 spring-service'
+        bat 'docker compose logs --tail 20 express-service'
+
+        // Pruebas de humo
         bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
         bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
       }
