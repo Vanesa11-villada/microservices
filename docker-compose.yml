@@ -39,8 +39,7 @@ services:
   # -------------------------
   mongodb:
     image: mongo:6
-    ports:
-      - "27018:27017"  # evita conflicto con tu Mongo local
+    
     volumes:
       - mongo-data:/data/db
     networks:
