@@ -30,8 +30,12 @@ pipeline {
             bat 'docker compose logs --tail 20 spring-service'
 
             // 3) Pruebas de humo
-            bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
-            bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
+                // 3.1) Generar el calendario para 2025
+
+                bat 'curl -f http://localhost:8090/api/calendario/generar/2025'
+
+               // 3.2) Ahora sí listamos (debería devolver un 200 con el array)
+                bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
         }
     }
 
