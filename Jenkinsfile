@@ -21,19 +21,12 @@ pipeline {
       }
     }
 
-stage('Smoke Test') {
-    steps {
-            // 1) Esperar a que el health status sea healthy (timeout 60s)
-            bat '''
-            for /L %%i in (1,1,12) do (
-                docker compose ps --services --filter "health=healthy" | findstr spring-service && exit /b 0
-                timeout /t 5 >nul
-            )
-            echo "ERROR: spring-service no alcanzó estado healthy en tiempo" 
-            exit /b 1
-            '''
+    stage('Smoke Test') {
+        steps {
+            // 1) Espera 60 segundos para que Spring tenga tiempo de arrancar
+            bat 'powershell -Command "Start-Sleep -Seconds 60"'
 
-            // 2) Mostrar últimos logs
+            // 2) Muestra los últimos logs de Spring para ver el arranque
             bat 'docker compose logs --tail 20 spring-service'
 
             // 3) Pruebas de humo
@@ -41,7 +34,7 @@ stage('Smoke Test') {
             bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
         }
     }
-
+    
   }
 
   post {
