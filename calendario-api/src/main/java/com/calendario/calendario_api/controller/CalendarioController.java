@@ -12,6 +12,11 @@ import java.util.List;
 public class CalendarioController {
     private final CalendarioService service;
 
+    @GetMapping("/")
+    public String home() {
+        return "API Calendario funcionando correctamente!";
+    }
+
     public CalendarioController(CalendarioService service) {
         this.service = service;
     }
