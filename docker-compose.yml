@@ -9,11 +9,14 @@ services:
     environment:
       MYSQL_DATABASE: calendario_festivo
       MYSQL_ROOT_PASSWORD: root
+    healthcheck:
+      test: ["CMD", "mysqladmin","ping","-h","localhost"]
+      interval: 10s
+      retries: 5
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
       - backend
-
   # -------------------------
   # 2) Spring Boot
   # -------------------------
@@ -22,12 +25,18 @@ services:
       context: ./calendario-api
       dockerfile: Dockerfile
     ports:
-      - "8090:8090"   # expuesto para pruebas desde host
+      - "8090:8090"
     depends_on:
-      - mysql
-      - express-service
+      mysql:
+        condition: service_healthy
+      express-service:
+        condition: service_started
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/calendario_festivo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: >-
+        jdbc:mysql://mysql:3306/calendario_festivo
+        ?useSSL=false
+        &allowPublicKeyRetrieval=true
+        &serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       FESTIVOS_API_URL: http://express-service:3000/api/holidays

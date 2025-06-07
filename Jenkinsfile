@@ -21,20 +21,27 @@ pipeline {
       }
     }
 
-    stage('Smoke Test') {
-      steps {
-        // Espera a que arranquen (30s)
-        bat 'powershell -Command "Start-Sleep -Seconds 30"'
+stage('Smoke Test') {
+    steps {
+            // 1) Esperar a que el health status sea healthy (timeout 60s)
+            bat '''
+            for /L %%i in (1,1,12) do (
+                docker compose ps --services --filter "health=healthy" | findstr spring-service && exit /b 0
+                timeout /t 5 >nul
+            )
+            echo "ERROR: spring-service no alcanzó estado healthy en tiempo" 
+            exit /b 1
+            '''
 
-        // Muestra los últimos logs
-        bat 'docker compose logs --tail 20 spring-service'
-        bat 'docker compose logs --tail 20 express-service'
+            // 2) Mostrar últimos logs
+            bat 'docker compose logs --tail 20 spring-service'
 
-        // Pruebas de humo
-        bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
-        bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
-      }
+            // 3) Pruebas de humo
+            bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
+            bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
+        }
     }
+
   }
 
   post {
