@@ -1,0 +1,78 @@
+version: "3.8"
+
+services:
+  # -------------------------
+  # 1) Base de datos MySQL
+  # -------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_calendario
+    environment:
+      MYSQL_DATABASE: calendario_festivo
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - backend
+
+  # -------------------------
+  # 2) Spring Boot
+  # -------------------------
+  spring-service:
+    build:
+      context: ./calendario-api
+      dockerfile: Dockerfile
+    container_name: spring_calendario
+    ports:
+      - "8090:8090"
+    depends_on:
+      - mysql
+      - express-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/calendario_festivo?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      # Endpoint de tu API Express
+      FESTIVOS_API_URL: http://express-service:3000/api/holidays
+    networks:
+      - backend
+
+  # -------------------------
+  # 3) MongoDB
+  # -------------------------
+  mongodb:
+    image: mongo:6
+    container_name: mongo_festivos
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend
+
+  # -------------------------
+  # 4) Express + MongoDB
+  # -------------------------
+  express-service:
+    build:
+      context: ./festivos-api
+      dockerfile: Dockerfile
+    container_name: express_festivos
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongodb
+    environment:
+      MONGODB_URI: mongodb://mongodb:27017/festivos
+    networks:
+      - backend
+
+volumes:
+  mysql-data:
+  mongo-data:
+
+networks:
+  backend:
+    driver: bridge
