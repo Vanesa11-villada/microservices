@@ -14,7 +14,7 @@ pipeline {
         // Limpia contenedores antiguos
         bat 'docker rm -f express_festivos || echo "express_festivos no existía"'
         bat 'docker rm -f spring_calendario || echo "spring_calendario no existía"'
-        bat 'docker compose down --remove-orphans || exit 0'
+        bat 'docker compose down --remove-orphans -v || exit 0'
 
         // Reconstruye y levanta
         bat 'docker compose up -d --build --force-recreate'
@@ -34,7 +34,7 @@ pipeline {
             bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
         }
     }
-    
+
   }
 
   post {
