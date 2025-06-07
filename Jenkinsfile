@@ -23,21 +23,23 @@ pipeline {
 
     stage('Smoke Test') {
         steps {
-            // 1) Espera 60 segundos para que Spring tenga tiempo de arrancar
+            // 1) Dale tiempo sólido a que Spring levante (60s)
             bat 'powershell -Command "Start-Sleep -Seconds 60"'
 
-            // 2) Muestra los últimos logs de Spring para ver el arranque
+            // 2) Verifica qué contenedores están arriba y sus puertos
+            bat 'docker compose ps'
+
+            // 3) Muestra los últimos 20 logs de Spring para confirmar que arrancó
             bat 'docker compose logs --tail 20 spring-service'
 
-            // 3) Pruebas de humo
-                // 3.1) Generar el calendario para 2025
+            // 4) Smoke test de Express (éste ya sabíamos que funciona)
+            bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
 
-                bat 'curl -f http://localhost:8090/api/calendario/generar/2025'
-
-               // 3.2) Ahora sí listamos (debería devolver un 200 con el array)
-                bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
+            // 5) Ahora sí llama a generar y luego a listar en Spring
+            bat 'curl -f http://localhost:8090/api/calendario/generar/2025'
+            bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
         }
-    }
+     }
 
   }
 
