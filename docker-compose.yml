@@ -6,7 +6,6 @@ services:
   # -------------------------
   mysql:
     image: mysql:8.0
-    container_name: mysql_calendario
     environment:
       MYSQL_DATABASE: calendario_festivo
       MYSQL_ROOT_PASSWORD: root
@@ -59,7 +58,6 @@ services:
     build:
       context: ./festivos-api
       dockerfile: Dockerfile
-    container_name: express_festivos
     ports:
       - "3000:3000"
     depends_on:
