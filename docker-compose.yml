@@ -7,7 +7,6 @@ services:
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_DATABASE: calendario_festivo
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3307:3306" 
@@ -23,7 +22,6 @@ services:
     build:
       context: ./calendario-api
       dockerfile: Dockerfile
-    container_name: spring_calendario
     ports:
       - "8090:8090"
     depends_on:
@@ -43,7 +41,6 @@ services:
   # -------------------------
   mongodb:
     image: mongo:6
-    container_name: mongo_festivos
     ports:
       - "27017:27017"
     volumes:
