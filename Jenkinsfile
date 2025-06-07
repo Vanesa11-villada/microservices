@@ -18,7 +18,7 @@ pipeline {
 
     stage('Smoke Test') {
       steps {
-        bat 'timeout /t 10'
+        bat 'powershell -Command "Start-Sleep -Seconds 10"'
         bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
         bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
       }
