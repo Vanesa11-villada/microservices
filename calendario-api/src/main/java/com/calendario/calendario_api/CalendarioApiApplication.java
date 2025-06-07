@@ -12,9 +12,4 @@ public class CalendarioApiApplication {
         SpringApplication.run(CalendarioApiApplication.class, args);
     }
 
-    // <-- Agrega este método para exponer RestTemplate como bean
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
 }
