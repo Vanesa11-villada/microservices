@@ -54,7 +54,7 @@ services:
       context: ./festivos-api
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"   # antes era 3000, ahora 3001 para evitar colisión
+      - "3000:3000"
     depends_on:
       - mongodb
     environment:

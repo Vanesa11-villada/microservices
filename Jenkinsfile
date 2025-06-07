@@ -17,8 +17,13 @@ pipeline {
 
     stage('Smoke Test') {
       steps {
+<<<<<<< HEAD
         bat 'powershell -Command "Start-Sleep -Seconds 30"'
         bat 'docker logs spring_calendario --tail 20'
+=======
+        // Verificamos rápidamente que los servicios respondan
+        bat 'timeout /t 10'
+>>>>>>> d86a99d (Actualizacion de docker-compose y Jenkinsfile)
         bat 'curl -f http://localhost:3001/api/holidays?date=2025/06/07'
         bat 'curl -f http://localhost:8090/api/calendario/listar/2025'
       }
