@@ -1,0 +1,31 @@
+# ------------------------------------------------
+# Etapa 1: Build (instala dependencias y verifica)
+# ------------------------------------------------
+FROM node:18-alpine AS builder
+WORKDIR /usr/src/app
+
+# Copia package.json y package-lock.json para cache de dependencias
+COPY package*.json ./
+
+# Instala solo dependencias de producción
+RUN npm ci --only=production
+
+# Copia el resto del código
+COPY . .
+
+# ------------------------------------------------
+# Etapa 2: Runtime (solo lo necesario)
+# ------------------------------------------------
+FROM node:18-alpine AS runner
+WORKDIR /usr/src/app
+
+# Copiamos solo node_modules y el código
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app ./
+
+# Define variables de entorno por defecto (puedes sobreescribir en docker-compose)
+ENV PORT=3000
+EXPOSE 3000
+
+# Arranca la app
+CMD ["node", "app.js"]

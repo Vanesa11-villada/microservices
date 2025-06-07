@@ -1,0 +1,23 @@
+# Etapa 1: compilar con Maven
+FROM maven:3.8.6-eclipse-temurin-17 AS builder
+WORKDIR /app
+
+# Copiamos pom y código
+COPY pom.xml .
+COPY src ./src
+
+# Empaquetamos sin ejecutar tests
+RUN mvn clean package -DskipTests
+
+# Etapa 2: runtime ligero
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+
+# Copiamos el .jar generado
+COPY --from=builder /app/target/*.jar app.jar
+
+# Arranque de la app
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+
+# Exponemos el puerto que usas (8090)
+EXPOSE 8090
